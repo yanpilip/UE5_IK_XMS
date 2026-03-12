@@ -95,9 +95,7 @@ void UThesisIKLibrary::ComputeFootOffsetAndRotation(
         FCollisionShape::MakeSphere(3.0f),
         Params
     );
-    //DrawDebugLine(World, RstartVec, RendVec, FColor::Green, false, 5.0f);
-    //DrawDebugSphere(World, RstartVec, 3.0f, 12, FColor::Red, false, 5.0f);
-    //DrawDebugSphere(World, RendVec, 3.0f, 12, FColor::Blue, false, 5.0f);
+
     FVector RImpactPoint = FVector(0, 0, 0);
     FVector RImpactNormal = FVector(0, 0, 0);
 
@@ -106,22 +104,8 @@ void UThesisIKLibrary::ComputeFootOffsetAndRotation(
     OutOffsetR = FVector(0, 0, 0);
     OutRotR = FRotator(0, 0, 0);
 
-    //todo RAGDOLL LOGIC
     if (((ShouldTraceL && !bHitL) || (ShouldTraceR && !bHitR)) || (ShouldTraceL && (rootLocation.Z - LHit.ImpactPoint.Z > 50.0f)) || (ShouldTraceR && (rootLocation.Z - RHit.ImpactPoint.Z > 50.0f))) {
         //GEngine->AddOnScreenDebugMessage(1, 10, FColor::Yellow, FString::Printf(TEXT("%d %d | %f - L %f R %f"), (ShouldTraceL && !bHitL), (ShouldTraceR && !bHitR), rootLocation.Z,  LHit.ImpactPoint.Z, RHit.ImpactPoint.Z));
-        
-        if (false && LfootLocation.Z - LHit.ImpactPoint.Z > 50.0f) {
-            DrawDebugSphere(World, LstartVec, 3.0f, 12, FColor::Red, false, 15.0f);
-            DrawDebugLine(World, LstartVec, LendVec, FColor::Red, false, 15.0f);
-            DrawDebugSphere(World, LImpactPoint, 3.0f, 12, FColor::Green, false, 15.0f);
-            DrawDebugSphere(World, LendVec, 3.0f, 12, FColor::Red, false, 15.0f);
-        }
-        if (false && RfootLocation.Z - RHit.ImpactPoint.Z > 50.0f) {
-            DrawDebugSphere(World, RstartVec, 3.0f, 12, FColor::Blue, false, 15.0f);
-            DrawDebugLine(World, RstartVec, RendVec, FColor::Blue, false, 15.0f);
-            DrawDebugSphere(World, RImpactPoint, 3.0f, 12, FColor::Green, false, 15.0f);
-            DrawDebugSphere(World, RendVec, 3.0f, 12, FColor::Blue, false, 15.0f);
-        }
         OutOffsetL = FVector(0, 0, 0);
         OutRotL = FRotator(0, 0, 0);
         OutOffsetR = FVector(0, 0, 0);
@@ -138,25 +122,25 @@ void UThesisIKLibrary::ComputeFootOffsetAndRotation(
         OutRHit = RHit;
         float PelvisL = 0;
         float PelvisR = 0;
-        //FVector MinImpactPoint = AImpactNormal.Z < BImpactPoint.Z ? AImpactPoint : BImpactPoint;
-        //OutOffsetL.Z = LImpactPoint.Z - rootLocation.Z + (LHit.ImpactNormal.GetSafeNormal() * 2.0f).Z;
+
+
         if (ShouldTraceL) {
             OutOffsetL.Z = LHit.Location.Z - LfootLocation.Z;
             PelvisL = LImpactPoint.Z - rootLocation.Z;
         }
         else {
-            PelvisL = 999.0f;
+            PelvisL = FLT_MAX;
         }
         if (ShouldTraceR) {
             OutOffsetR.Z = RHit.Location.Z - RfootLocation.Z;
             PelvisR = RImpactPoint.Z - rootLocation.Z;
         }
         else {
-            PelvisR = 999.0f;
+            PelvisR = FLT_MAX;
         }
 
         OutOffsetPel.Z = FMath::Min(PelvisL, PelvisR);
-        if (OutOffsetPel.Z == 999.0f)
+        if (OutOffsetPel.Z == FLT_MAX)
         {
             OutOffsetPel.Z = 0.f;
         }
