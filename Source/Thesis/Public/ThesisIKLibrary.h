@@ -19,18 +19,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Thesis|IK", meta = (WorldContext = "WorldContextObject"))
 	static void ComputeFootOffsetAndRotation(
 		const UObject* WorldContextObject,
-		const FVector& footLocation,
-		const FVector& rootLocation,
-		FVector& OutOffset,
-		FRotator& OutRot
-	);
-	UFUNCTION(BlueprintCallable, Category = "Thesis|IK", meta = (WorldContext = "WorldContextObject"))
-	static void ComputeFootOffsetAndRotation2(
-		const UObject* WorldContextObject,
 		const FVector& LfootLocation,
 		const FVector& RfootLocation,
 		const FVector& rootLocation,
-		const float CapsuleOffset,
+		const bool& ShouldTraceL,
+		const bool& ShouldTraceR,
 		FVector& OutOffsetL,
 		FRotator& OutRotL,
 		FVector& OutOffsetR,
@@ -38,14 +31,17 @@ public:
 		FVector& OutOffsetPel,
 		FHitResult& OutLHit,
 		FHitResult& OutRHit,
-		bool& OutIfHit
+		bool& OutIfHit,
+		bool& OutShouldRagdoll
 	);
+
 	UFUNCTION(BlueprintCallable, Category = "Thesis|IK", meta = (WorldContext = "WorldContextObject"))
-	static void ComputeFootOffsetAndRotation3(
+	static void FootPlacement(
 		const UObject* WorldContextObject,
-		const FVector& footLocation,
+		const FVector& LfootLocation,
+		const FVector& RfootLocation,
 		const FVector& rootLocation,
-		FVector& OutOffset,
-		FRotator& OutRot
+		bool& OutShouldTraceL,
+		bool& OutShouldTraceR
 	);
 };
