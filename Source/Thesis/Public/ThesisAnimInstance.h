@@ -79,6 +79,4 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "IK")
 	float FootRIKAlpha = 1.0f;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "IK")
-	float PelvisInterpSpeed = 15.0f;
 };

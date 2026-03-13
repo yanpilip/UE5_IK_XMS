@@ -34,13 +34,13 @@ void UThesisAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	}
 
 	UpdateCharacterState();
-	//if (!IsFalling) {
-		//UpdateIK(DeltaSeconds);
-	//}
-	//else
-	//{
-		//ResetIK();
-	//}
+	if (!IsFalling) {
+		UpdateIK(DeltaSeconds);
+	}
+	else
+	{
+		ResetIK();
+	}
 }
 
 void UThesisAnimInstance::ResetIK()
@@ -69,7 +69,7 @@ void UThesisAnimInstance::UpdateCharacterState()
 	}
 
 	ShouldMove = GroundSpeed > 0.01f && !(MovementComponent->GetCurrentAcceleration().Equals(FVector::ZeroVector, 0.0f));
-
+	GEngine->AddOnScreenDebugMessage(1, 10, FColor::Yellow, FString::Printf(TEXT("%d"), ShouldMove));
 	if (Character->GetCharacterMovement())
 	{
 		IsFalling = MovementComponent->IsFalling();
@@ -99,10 +99,22 @@ void UThesisAnimInstance::UpdateIK(float DeltaSeconds)
 	bool ShouldTraceL = true;
 	bool ShouldTraceR = true;
 
+	FVector LFootLocation = FVector::ZeroVector;
+	FVector RFootLocation = FVector::ZeroVector;
+
+	if (Character->GetMesh())
+	{
+		LFootLocation = Character->GetMesh()->GetSocketLocation(TEXT("foot_l_Socket"));
+		RFootLocation = Character->GetMesh()->GetSocketLocation(TEXT("foot_r_Socket"));
+	}
+	else {
+		return;
+	}
+
 	UThesisIKLibrary::FootPlacement(
 		Character,
-		FootLGoalPosition,
-		FootRGoalPosition,
+		LFootLocation,
+		RFootLocation,
 		RootLocation,
 		ShouldTraceL,
 		ShouldTraceR
@@ -120,8 +132,8 @@ void UThesisAnimInstance::UpdateIK(float DeltaSeconds)
 
 	UThesisIKLibrary::ComputeFootOffsetAndRotation(
 		Character,
-		FootLGoalPosition,
-		FootRGoalPosition,
+		LFootLocation,
+		RFootLocation,
 		RootLocation,
 		ShouldTraceL,
 		ShouldTraceR,
@@ -138,10 +150,8 @@ void UThesisAnimInstance::UpdateIK(float DeltaSeconds)
 
 	if (OutShouldRagdoll)
 	{
-		PelvisGoalPosition = FVector::ZeroVector;
-		FootLGoalRotation = FRotator::ZeroRotator;
-		FootRGoalRotation = FRotator::ZeroRotator;
-		return;
+
+		//TODO Ragdoll
 	}
 
 	if (OutIfHit)
@@ -153,12 +163,49 @@ void UThesisAnimInstance::UpdateIK(float DeltaSeconds)
 			PelvisGoalPosition,
 			TargetPelvis,
 			DeltaSeconds,
-			PelvisInterpSpeed
+			15.0f
 		);
 
-		FootLGoalPosition = OutOffsetL;
-		FootRGoalPosition = OutOffsetR;
-		FootLGoalRotation = OutRotL;
-		FootRGoalRotation = OutRotR;
+		FVector TargetLFPos = FootLGoalPosition;
+		TargetLFPos.Z = OutOffsetL.Z;
+
+		FootLGoalPosition = FMath::VInterpTo(
+			FootLGoalPosition,
+			TargetLFPos,
+			DeltaSeconds,
+			15.0f
+		);
+
+		FVector TargetRFPos = FootRGoalPosition;
+		TargetRFPos.Z = OutOffsetR.Z;
+
+		FootRGoalPosition = FMath::VInterpTo(
+			FootRGoalPosition,
+			TargetRFPos,
+			DeltaSeconds,
+			15.0f
+		);
+
+		FRotator TargetLFRot = OutRotL;
+
+		FootLGoalRotation = FMath::RInterpTo(
+			FootLGoalRotation,
+			TargetLFRot,
+			DeltaSeconds,
+			15.0f
+		);
+
+		FRotator TargetRFRot = OutRotR;
+
+		FootRGoalRotation = FMath::RInterpTo(
+			FootRGoalRotation,
+			TargetRFRot,
+			DeltaSeconds,
+			15.0f
+		);
+	}
+	else
+	{
+		ResetIK();
 	}
 }
