@@ -5,6 +5,7 @@
 #include "ThesisAnimInstance.generated.h"
 
 class AThesisCharacter;
+class UCharacterMovementComponent;
 
 UCLASS()
 class THESIS_API UThesisAnimInstance : public UAnimInstance
@@ -23,6 +24,9 @@ protected:
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "Character")
 	AThesisCharacter* Character = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Character")
+	UCharacterMovementComponent* MovementComponent = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Character")
 	FVector Velocity = FVector::ZeroVector;

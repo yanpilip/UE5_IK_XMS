@@ -4,7 +4,7 @@
 
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Kismet/KismetAnimationLibrary.h"
+#include "KismetAnimationLibrary.h"
 
 void UThesisAnimInstance::NativeInitializeAnimation()
 {
@@ -34,13 +34,13 @@ void UThesisAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	}
 
 	UpdateCharacterState();
-	if (!IsFalling) {
-		UpdateIK(DeltaSeconds);
-	}
-	else
-	{
-		ResetIK;
-	}
+	//if (!IsFalling) {
+		//UpdateIK(DeltaSeconds);
+	//}
+	//else
+	//{
+		//ResetIK();
+	//}
 }
 
 void UThesisAnimInstance::ResetIK()
@@ -56,7 +56,7 @@ void UThesisAnimInstance::ResetIK()
 
 void UThesisAnimInstance::UpdateCharacterState()
 {
-	Velocity = MovementComponent->GetVelocity();
+	Velocity = Character->GetVelocity();
 	
 	GroundSpeed = Velocity.Size2D();
 
