@@ -14,16 +14,23 @@ class THESIS_API UThesisAnimInstance : public UAnimInstance
 
 public:
 	virtual void NativeInitializeAnimation() override;
+
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 protected:
 	void UpdateCharacterState();
 	void UpdateIK(float DeltaSeconds);
 	void ResetIK();
+	void ExecuteDelegates();
 
 public:
+
+
+	UFUNCTION(BlueprintPure, Category = "Character")
+	bool GetIsCrouchedState() const;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Character")
-	AThesisCharacter* Character = nullptr;
+	ACharacter* Character = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Character")
 	UCharacterMovementComponent* MovementComponent = nullptr;
@@ -46,6 +53,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Character")
 	bool IsCrouched = false;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Features")
+	bool ShouldCrouch = false;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "IK")
 	FVector FootLGoalPosition = FVector::ZeroVector;
 
@@ -62,16 +72,7 @@ public:
 	FRotator FootRGoalRotation = FRotator::ZeroRotator;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "IK")
-	FVector HandLGoalPosition = FVector::ZeroVector;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "IK")
-	FVector HandRGoalPosition = FVector::ZeroVector;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "IK")
 	float CrouchRootOffset = 0.0f;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "IK")
-	FVector RootSnapPos = FVector::ZeroVector;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "IK")
 	float FootLIKAlpha = 1.0f;
@@ -79,4 +80,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "IK")
 	float FootRIKAlpha = 1.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IK|Sockets")
+	FName LeftFootSocketName = TEXT("foot_l_Socket");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IK|Sockets")
+	FName RightFootSocketName = TEXT("foot_r_Socket");
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Features")
+	void OnOneLegLostIK();
 };

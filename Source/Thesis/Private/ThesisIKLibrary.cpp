@@ -46,14 +46,14 @@ void UThesisIKLibrary::ComputeFootOffsetAndRotation(
     FHitResult& OutLHit,
     FHitResult& OutRHit,
     bool& OutIfHit,
-    bool& OutShouldRagdoll
+    bool& OneLegLostIK
 )
 {
     FHitResult LHit;
     FHitResult RHit;
     bool bHitL = false;
     bool bHitR = false;
-    OutShouldRagdoll = false;
+    OneLegLostIK = false;
     /// A
     FVector LstartVec = LfootLocation + FVector(0, 0, 30);
     FVector LendVec = LfootLocation - FVector(0, 0, 50);
@@ -113,7 +113,7 @@ void UThesisIKLibrary::ComputeFootOffsetAndRotation(
         OutOffsetPel = FVector(0, 0, 0);
         OutIfHit = false;
         
-        OutShouldRagdoll = true;
+        OneLegLostIK = true;
         return;
     }
         OutIfHit = true;

@@ -32,7 +32,7 @@ public:
 		FHitResult& OutLHit,
 		FHitResult& OutRHit,
 		bool& OutIfHit,
-		bool& OutShouldRagdoll
+		bool& OneLegLostIK
 	);
 
 	UFUNCTION(BlueprintCallable, Category = "Thesis|IK", meta = (WorldContext = "WorldContextObject"))

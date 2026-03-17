@@ -10,7 +10,11 @@ void UThesisAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	Character = Cast<AThesisCharacter>(TryGetPawnOwner());
+	Character = Cast<ACharacter>(TryGetPawnOwner());
+}
+
+bool UThesisAnimInstance::GetIsCrouchedState() const{
+	return ((MovementComponent && ShouldCrouch) ? MovementComponent->IsCrouching() : false);
 }
 
 void UThesisAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -19,7 +23,7 @@ void UThesisAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (!Character)
 	{
-		Character = Cast<AThesisCharacter>(TryGetPawnOwner());
+		Character = Cast<ACharacter>(TryGetPawnOwner());
 	}
 
 	if (!Character)
@@ -41,6 +45,8 @@ void UThesisAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		ResetIK();
 	}
+
+	ExecuteDelegates();
 }
 
 void UThesisAnimInstance::ResetIK()
@@ -73,7 +79,7 @@ void UThesisAnimInstance::UpdateCharacterState()
 	if (Character->GetCharacterMovement())
 	{
 		IsFalling = MovementComponent->IsFalling();
-		IsCrouched = MovementComponent->IsCrouching();
+		IsCrouched = GetIsCrouchedState();
 	}
 	else
 	{
@@ -104,8 +110,8 @@ void UThesisAnimInstance::UpdateIK(float DeltaSeconds)
 
 	if (Character->GetMesh())
 	{
-		LFootLocation = Character->GetMesh()->GetSocketLocation(TEXT("foot_l_Socket"));
-		RFootLocation = Character->GetMesh()->GetSocketLocation(TEXT("foot_r_Socket"));
+		LFootLocation = Character->GetMesh()->GetSocketLocation(LeftFootSocketName);
+		RFootLocation = Character->GetMesh()->GetSocketLocation(RightFootSocketName);
 	}
 	else {
 		return;
@@ -128,7 +134,7 @@ void UThesisAnimInstance::UpdateIK(float DeltaSeconds)
 	FHitResult OutLHit;
 	FHitResult OutRHit;
 	bool OutIfHit = false;
-	bool OutShouldRagdoll = false;
+	bool OneLegLostIK = false;
 
 	UThesisIKLibrary::ComputeFootOffsetAndRotation(
 		Character,
@@ -145,13 +151,12 @@ void UThesisAnimInstance::UpdateIK(float DeltaSeconds)
 		OutLHit,
 		OutRHit,
 		OutIfHit,
-		OutShouldRagdoll
+		OneLegLostIK
 	);
 
-	if (OutShouldRagdoll)
+	if (OneLegLostIK)
 	{
-
-		//TODO Ragdoll
+		OnOneLegLostIK();
 	}
 
 	if (OutIfHit)
