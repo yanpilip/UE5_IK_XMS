@@ -39,16 +39,18 @@ void UThesisAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		return;
 	}
-
+	if (EnableFootIK) {
+		if (!IsFalling) {
+			UpdateFootIKC(DeltaSeconds);
+		}
+		else
+		{
+			UThesisIKLibrary::SetPelvisIKC(Character->GetMesh(), this, FVector(0, 0, 0), FVector(0, 0, 0), pelvis_alpha_c, pelvis_offset_c);
+			ResetIK(foot_ik_l_name);
+			ResetIK(foot_ik_r_name);
+		}
+	}
 	UpdateCharacterState();
-	if (!IsFalling) {
-		UpdateFootIKC(DeltaSeconds);
-	}
-	else
-	{
-		UThesisIKLibrary::SetPelvisIKC(Character->GetMesh(), this, FVector(0, 0, 0), FVector(0, 0, 0), pelvis_alpha_c, pelvis_offset_c);
-		ResetIK();
-	}
 }
 
 void UThesisAnimInstance::UpdateCharacterState()
@@ -84,36 +86,40 @@ void UThesisAnimInstance::UpdateFootIKC(float DeltaSeconds)
 	{
 		return;
 	}
-	UThesisIKLibrary::SetFootIKC(Character->GetMesh(), Character, this, IsCrouched, curve_left, fook_ik_l_name, root_bone_name, foot_ik_l_offset_c, foot_ik_l_target_c, foot_ik_l_rotation_c);
-	UThesisIKLibrary::SetFootIKC(Character->GetMesh(), Character, this, IsCrouched, curve_right, fook_ik_r_name, root_bone_name, foot_ik_r_offset_c, foot_ik_r_target_c, foot_ik_r_rotation_c);
+	UThesisIKLibrary::SetFootIKC(Character->GetMesh(), Character, this, IsCrouched, curve_left, foot_ik_l_name, root_bone_name, foot_ik_l_offset_c, foot_ik_l_target_c, foot_ik_l_rotation_c);
+	UThesisIKLibrary::SetFootIKC(Character->GetMesh(), Character, this, IsCrouched, curve_right, foot_ik_r_name, root_bone_name, foot_ik_r_offset_c, foot_ik_r_target_c, foot_ik_r_rotation_c);
 
 	UThesisIKLibrary::SetPelvisIKC(Character->GetMesh(), this, foot_ik_l_target_c, foot_ik_r_target_c, pelvis_alpha_c, pelvis_offset_c);
 
 }
 
-void UThesisAnimInstance::ResetIK() {
-	foot_ik_l_offset_c = FMath::VInterpTo(
-		foot_ik_l_offset_c,
-		FVector(0, 0, 0),
-		GetWorld()->GetDeltaSeconds(),
-		reset_ik_speed
-	);
-	foot_ik_r_offset_c = FMath::VInterpTo(
-		foot_ik_r_offset_c,
-		FVector(0, 0, 0),
-		GetWorld()->GetDeltaSeconds(),
-		reset_ik_speed
-	);
-	foot_ik_l_rotation_c = FMath::RInterpTo(
-		foot_ik_l_rotation_c,
-		FRotator(0, 0, 0),
-		GetWorld()->GetDeltaSeconds(),
-		reset_ik_speed
-	);
-	foot_ik_r_rotation_c = FMath::RInterpTo(
-		foot_ik_r_rotation_c,
-		FRotator(0, 0, 0),
-		GetWorld()->GetDeltaSeconds(),
-		reset_ik_speed
-	);
+void UThesisAnimInstance::ResetIK(FName legname) {
+	if (legname == foot_ik_l_name) {
+		foot_ik_l_offset_c = FMath::VInterpTo(
+			foot_ik_l_offset_c,
+			FVector(0, 0, 0),
+			GetWorld()->GetDeltaSeconds(),
+			reset_ik_speed
+		);
+		foot_ik_r_offset_c = FMath::VInterpTo(
+			foot_ik_r_offset_c,
+			FVector(0, 0, 0),
+			GetWorld()->GetDeltaSeconds(),
+			reset_ik_speed
+		);
+	}
+	else {
+		foot_ik_l_rotation_c = FMath::RInterpTo(
+			foot_ik_l_rotation_c,
+			FRotator(0, 0, 0),
+			GetWorld()->GetDeltaSeconds(),
+			reset_ik_speed
+		);
+		foot_ik_r_rotation_c = FMath::RInterpTo(
+			foot_ik_r_rotation_c,
+			FRotator(0, 0, 0),
+			GetWorld()->GetDeltaSeconds(),
+			reset_ik_speed
+		);
+	}
 }

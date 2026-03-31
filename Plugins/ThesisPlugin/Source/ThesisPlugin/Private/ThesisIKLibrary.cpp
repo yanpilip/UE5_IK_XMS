@@ -30,10 +30,6 @@ void UThesisIKLibrary::SetFootIKC(
 	}
 	FVector expected_floor_location = FVector(mesh->GetSocketLocation(foot_ikbone).X, mesh->GetSocketLocation(foot_ikbone).Y, mesh->GetSocketLocation(root_bone).Z);
 
-	if (AnimInstance){ 
-		AnimInstance->ResetIK(); 
-	}
-
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(mesh->GetOwner());
@@ -65,7 +61,7 @@ void UThesisIKLibrary::SetFootIKC(
 		foot_ik_target = FVector::ZeroVector;
 		if (AnimInstance)
 		{
-			AnimInstance->ResetIK();
+			AnimInstance->ResetIK(foot_ikbone);
 		}
 	}
 

@@ -22,7 +22,7 @@ protected:
 	void UpdateFootIKC(float DeltaSeconds);
 
 public:
-	void ResetIK();
+	void ResetIK(FName legname);
 
 	UFUNCTION(BlueprintPure, Category = "Character")
 	bool GetIsCrouchedState() const;
@@ -53,6 +53,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Features")
 	bool ShouldCrouch = false;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Features")
+	bool EnableFootIK = true;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Offsets")
 	FVector foot_ik_l_offset_c = FVector(0, 0, 0);
@@ -87,6 +90,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Float Variables")
 	float ik_break_crouching_distance = float(80.0f);
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Float Variables")
+	float ik_stance_width = float(20.0f);
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations|Feet")
 	float feet_interp_speed_up = float(30.0f);
 
@@ -104,7 +110,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations")
 	float reset_ik_speed = float(10.0f);
-
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Trace")
 	FVector foot_trace_above = FVector(0,0,50);
