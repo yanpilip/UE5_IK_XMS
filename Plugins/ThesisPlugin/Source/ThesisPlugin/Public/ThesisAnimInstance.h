@@ -2,7 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "ThesisAnimInstance.generated.h"
+
 
 class AThesisCharacter;
 class UCharacterMovementComponent;
@@ -78,20 +80,20 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Offsets")
 	FVector pelvis_offset_c = FVector(0, 0, 0);
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Float Variables")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Offsets")
+	float ik_stance_width_offset = float(0.0f);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Other Variables")
 	float pelvis_alpha_c = float(1.0f);
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Float Variables")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Other Variables")
 	float foot_height_c = float(13.5f);
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Float Variables")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Other Variables")
 	float ik_break_standing_distance = float(100.0f);
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Float Variables")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Other Variables")
 	float ik_break_crouching_distance = float(80.0f);
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Float Variables")
-	float ik_stance_width = float(20.0f);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations|Feet")
 	float feet_interp_speed_up = float(30.0f);
@@ -107,7 +109,19 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations|Pelvis")
 	float pelvis_interp_speed_down = float(15.0f);
+	//////////////////////////////// TEST
+	UPROPERTY()
+	FVectorSpringState foot_ik_l_spring_state;
 
+	UPROPERTY()
+	FVectorSpringState foot_ik_r_spring_state;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations|Feet")
+	float feet_spring_stiffness = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations|Feet")
+	float feet_spring_damping = 5.0f;
+	////////////////////////////////
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations")
 	float reset_ik_speed = float(10.0f);
 

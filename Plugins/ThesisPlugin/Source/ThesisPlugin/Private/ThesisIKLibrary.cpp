@@ -28,7 +28,13 @@ void UThesisIKLibrary::SetFootIKC(
 		foot_ik_offset = FVector(0, 0, 0);
 		return;
 	}
-	FVector expected_floor_location = FVector(mesh->GetSocketLocation(foot_ikbone).X, mesh->GetSocketLocation(foot_ikbone).Y, mesh->GetSocketLocation(root_bone).Z);
+
+	FVector lateral_offset = Character->GetActorRightVector() * AnimInstance->ik_stance_width_offset;
+	if (foot_ikbone == AnimInstance->foot_ik_l_name) {
+		lateral_offset *= -1.0f;
+	}
+
+	FVector expected_floor_location = FVector(mesh->GetSocketLocation(foot_ikbone).X, mesh->GetSocketLocation(foot_ikbone).Y, mesh->GetSocketLocation(root_bone).Z) + lateral_offset;
 
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
@@ -68,7 +74,7 @@ void UThesisIKLibrary::SetFootIKC(
 	if (foot_ik_offset.Z > foot_ik_target.Z) {
 		foot_ik_offset = FMath::VInterpTo(
 			foot_ik_offset,
-			foot_ik_target,
+			foot_ik_target + lateral_offset,
 			mesh->GetWorld()->GetDeltaSeconds(),
 			AnimInstance->feet_interp_speed_up
 		);
@@ -76,7 +82,7 @@ void UThesisIKLibrary::SetFootIKC(
 	else {
 		foot_ik_offset = FMath::VInterpTo(
 			foot_ik_offset,
-			foot_ik_target,
+			foot_ik_target + lateral_offset,
 			mesh->GetWorld()->GetDeltaSeconds(),
 			AnimInstance->feet_interp_speed_down
 		);
