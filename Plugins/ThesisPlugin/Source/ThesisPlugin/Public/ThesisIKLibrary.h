@@ -18,19 +18,20 @@ public:
     static void SetFootIKC(
         USkeletalMeshComponent* mesh,
         ACharacter* character,
+        UThesisAnimInstance* AnimInstance,
         bool isCrouching,
         FName anim_curve_name,
         FName foot_ikbone,
         FName root_bone,
         UPARAM(ref) FVector& foot_ik_offset,
         UPARAM(ref) FVector& foot_ik_target,
-        UPARAM(ref) FRotator& foot_ik_rotator,
-        float foot_height
+        UPARAM(ref) FRotator& foot_ik_rotator 
     );
 
     UFUNCTION(BlueprintCallable, Category = "Thesis|IK")
     static void SetPelvisIKC(
         USkeletalMeshComponent* mesh,
+        UThesisAnimInstance* AnimInstance,
         FVector foot_ik_l_target,
         FVector foot_ik_r_target,
         UPARAM(ref) float& pelvis_alpha,

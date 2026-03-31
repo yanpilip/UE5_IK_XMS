@@ -42,14 +42,13 @@ void UThesisAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	UpdateCharacterState();
 	if (!IsFalling) {
-
+		UpdateFootIKC(DeltaSeconds);
 	}
 	else
 	{
-
+		UThesisIKLibrary::SetPelvisIKC(Character->GetMesh(), this, FVector(0, 0, 0), FVector(0, 0, 0), pelvis_alpha_c, pelvis_offset_c);
+		ResetIK();
 	}
-	UpdateCharacterState();
-	UpdateFootIKC(DeltaSeconds);
 }
 
 void UThesisAnimInstance::UpdateCharacterState()
@@ -85,17 +84,10 @@ void UThesisAnimInstance::UpdateFootIKC(float DeltaSeconds)
 	{
 		return;
 	}
+	UThesisIKLibrary::SetFootIKC(Character->GetMesh(), Character, this, IsCrouched, curve_left, fook_ik_l_name, root_bone_name, foot_ik_l_offset_c, foot_ik_l_target_c, foot_ik_l_rotation_c);
+	UThesisIKLibrary::SetFootIKC(Character->GetMesh(), Character, this, IsCrouched, curve_right, fook_ik_r_name, root_bone_name, foot_ik_r_offset_c, foot_ik_r_target_c, foot_ik_r_rotation_c);
 
-	if (IsFalling) {
-		UThesisIKLibrary::SetPelvisIKC(Character->GetMesh(), FVector(0,0,0), FVector(0,0,0), pelvis_alpha_c, pelvis_offset_c);
-		ResetIK();
-		return;
-	}
-
-	UThesisIKLibrary::SetFootIKC(Character->GetMesh(), Character, IsCrouched, FName("Enable_FootIK_L"), FName("ik_foot_l"), FName("root"), foot_ik_l_offset_c, foot_ik_l_target_c, foot_ik_l_rotation_c, foot_height_c);
-	UThesisIKLibrary::SetFootIKC(Character->GetMesh(), Character, IsCrouched, FName("Enable_FootIK_R"), FName("ik_foot_r"), FName("root"), foot_ik_r_offset_c, foot_ik_r_target_c, foot_ik_r_rotation_c, foot_height_c);
-
-	UThesisIKLibrary::SetPelvisIKC(Character->GetMesh(), foot_ik_l_target_c, foot_ik_r_target_c, pelvis_alpha_c, pelvis_offset_c);
+	UThesisIKLibrary::SetPelvisIKC(Character->GetMesh(), this, foot_ik_l_target_c, foot_ik_r_target_c, pelvis_alpha_c, pelvis_offset_c);
 
 }
 
@@ -104,24 +96,24 @@ void UThesisAnimInstance::ResetIK() {
 		foot_ik_l_offset_c,
 		FVector(0, 0, 0),
 		GetWorld()->GetDeltaSeconds(),
-		10.0f
+		reset_ik_speed
 	);
 	foot_ik_r_offset_c = FMath::VInterpTo(
 		foot_ik_r_offset_c,
 		FVector(0, 0, 0),
 		GetWorld()->GetDeltaSeconds(),
-		10.0f
+		reset_ik_speed
 	);
 	foot_ik_l_rotation_c = FMath::RInterpTo(
 		foot_ik_l_rotation_c,
 		FRotator(0, 0, 0),
 		GetWorld()->GetDeltaSeconds(),
-		10.0f
+		reset_ik_speed
 	);
 	foot_ik_r_rotation_c = FMath::RInterpTo(
 		foot_ik_r_rotation_c,
 		FRotator(0, 0, 0),
 		GetWorld()->GetDeltaSeconds(),
-		10.0f
+		reset_ik_speed
 	);
 }
