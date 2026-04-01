@@ -28,7 +28,9 @@ public class ThesisPlugin : ModuleRules
 				"Core",
                 "CoreUObject",
                 "Engine",
-				"AnimGraphRuntime"
+				"AnimGraphRuntime",
+                "EnhancedInput",
+                "UMG"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
