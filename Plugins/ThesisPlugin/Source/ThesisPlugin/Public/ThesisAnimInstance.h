@@ -109,19 +109,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations|Pelvis")
 	float pelvis_interp_speed_down = float(15.0f);
-	//////////////////////////////// TEST
-	UPROPERTY()
-	FVectorSpringState foot_ik_l_spring_state;
-
-	UPROPERTY()
-	FVectorSpringState foot_ik_r_spring_state;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations|Feet")
-	float feet_spring_stiffness = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations|Feet")
-	float feet_spring_damping = 5.0f;
-	////////////////////////////////
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations")
 	float reset_ik_speed = float(10.0f);
 

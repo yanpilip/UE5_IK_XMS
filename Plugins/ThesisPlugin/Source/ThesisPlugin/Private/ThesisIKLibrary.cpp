@@ -8,6 +8,23 @@
 #include "DrawDebugHelpers.h"
 #include "ThesisAnimInstance.h"
 
+FRotator UThesisIKLibrary::CalculateFootRotation(const FVector& impactNormal)
+{
+	return FRotator(
+		FMath::RadiansToDegrees(FMath::Atan2(impactNormal.X, impactNormal.Z)) * -1.0f,
+		0.0f,
+		FMath::RadiansToDegrees(FMath::Atan2(impactNormal.Y, impactNormal.Z))
+	);
+}
+
+FVector UThesisIKLibrary::CalculateFootTarget(const FVector& impactPoint, const FVector& impactNormal, const FVector& efl, const float fh)
+{
+	FVector foot = impactPoint + (impactNormal * fh);
+	FVector base = efl + (FVector(0, 0, 1.0f) * fh);
+
+	return (foot - base);
+}
+
 void UThesisIKLibrary::SetFootIKC(
 	USkeletalMeshComponent* mesh,
 	ACharacter* Character,
@@ -50,19 +67,9 @@ void UThesisIKLibrary::SetFootIKC(
 	if (!bHit) return;
 	if (!Character->GetCharacterMovement()->IsWalkable(HitResult)) return;
 	
-	FVector impactPoint = FVector(HitResult.ImpactPoint);
-	FVector impactNormal = FVector(HitResult.ImpactNormal);
+	foot_ik_target = CalculateFootTarget(HitResult.ImpactPoint, HitResult.ImpactNormal, expected_floor_location, AnimInstance->foot_height_c);
 
-	FVector foot = impactPoint + (impactNormal * AnimInstance->foot_height_c);
-	FVector base = expected_floor_location + (FVector(0, 0, 1.0f) * AnimInstance->foot_height_c);
-
-	foot_ik_target = foot - base;
-
-	FRotator foot_ik_rotator_target = FRotator(
-		FMath::RadiansToDegrees(FMath::Atan2(impactNormal.X, impactNormal.Z)) * -1.0f,  // Pitch
-		0.0f,                                                                              // Yaw
-		FMath::RadiansToDegrees(FMath::Atan2(impactNormal.Y, impactNormal.Z))            // Roll
-	);
+	FRotator foot_ik_rotator_target = CalculateFootRotation(HitResult.ImpactNormal);
 	if (HitResult.Distance > AnimInstance->ik_break_standing_distance || (isCrouching && HitResult.Distance > AnimInstance->ik_break_crouching_distance)) {
 		foot_ik_target = FVector::ZeroVector;
 		if (AnimInstance)
