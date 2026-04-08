@@ -25,6 +25,16 @@ FVector UThesisIKLibrary::CalculateFootTarget(const FVector& impactPoint, const 
 	return (foot - base);
 }
 
+bool UThesisIKLibrary::ShouldBreakIK(float distance, float standingLimit, float crouchingLimit, bool isCrouching)
+{
+	return distance > (isCrouching ? crouchingLimit : standingLimit);
+}
+
+float UThesisIKLibrary::SelectInterpSpeed(float currentZ, float targetZ, float up, float down)
+{
+	return (currentZ > targetZ) ? up : down;
+}
+
 void UThesisIKLibrary::SetFootIKC(
 	USkeletalMeshComponent* mesh,
 	ACharacter* Character,
@@ -70,7 +80,7 @@ void UThesisIKLibrary::SetFootIKC(
 	foot_ik_target = CalculateFootTarget(HitResult.ImpactPoint, HitResult.ImpactNormal, expected_floor_location, AnimInstance->foot_height_c);
 
 	FRotator foot_ik_rotator_target = CalculateFootRotation(HitResult.ImpactNormal);
-	if (HitResult.Distance > AnimInstance->ik_break_standing_distance || (isCrouching && HitResult.Distance > AnimInstance->ik_break_crouching_distance)) {
+	if (ShouldBreakIK(HitResult.Distance, AnimInstance->ik_break_standing_distance, AnimInstance->ik_break_crouching_distance, isCrouching)){
 		foot_ik_target = FVector::ZeroVector;
 		if (AnimInstance)
 		{
@@ -78,22 +88,12 @@ void UThesisIKLibrary::SetFootIKC(
 		}
 	}
 
-	if (foot_ik_offset.Z > foot_ik_target.Z) {
-		foot_ik_offset = FMath::VInterpTo(
-			foot_ik_offset,
-			foot_ik_target + lateral_offset,
-			mesh->GetWorld()->GetDeltaSeconds(),
-			AnimInstance->feet_interp_speed_up
-		);
-	}
-	else {
-		foot_ik_offset = FMath::VInterpTo(
-			foot_ik_offset,
-			foot_ik_target + lateral_offset,
-			mesh->GetWorld()->GetDeltaSeconds(),
-			AnimInstance->feet_interp_speed_down
-		);
-	}
+	foot_ik_offset = FMath::VInterpTo(
+		foot_ik_offset,
+		foot_ik_target + lateral_offset,
+		mesh->GetWorld()->GetDeltaSeconds(),
+		SelectInterpSpeed(foot_ik_offset.Z, foot_ik_target.Z, AnimInstance->feet_interp_speed_up, AnimInstance->feet_interp_speed_down)
+	);
 
 	foot_ik_rotator = FMath::RInterpTo(
 		foot_ik_rotator,
@@ -104,6 +104,15 @@ void UThesisIKLibrary::SetFootIKC(
 
 }
 
+float UThesisIKLibrary::CalculatePelvisAlpha(float left, float right)
+{
+	return (left + right) / 2.0f;
+}
+
+FVector UThesisIKLibrary::CalculatePelvisTarget(FVector left, FVector right)
+{
+	return (left.Z < right.Z) ? left : right;
+}
 
 void UThesisIKLibrary::SetPelvisIKC(
 	USkeletalMeshComponent* mesh,
@@ -114,35 +123,22 @@ void UThesisIKLibrary::SetPelvisIKC(
 	FVector& pelvis_offset
 )
 {
-	pelvis_alpha = ((mesh->GetAnimInstance()->GetCurveValue(AnimInstance->curve_left)) + (mesh->GetAnimInstance()->GetCurveValue(AnimInstance->curve_right))) / 2.0f;
+	pelvis_alpha = CalculatePelvisAlpha(
+		mesh->GetAnimInstance()->GetCurveValue(AnimInstance->curve_left),
+		mesh->GetAnimInstance()->GetCurveValue(AnimInstance->curve_right)
+	);
 
 	if (pelvis_alpha <= 0) {
 		pelvis_offset = FVector(0, 0, 0);
 		return;
 	}
 
-	FVector pelvis_target = FVector::ZeroVector;
-	if (foot_ik_l_target.Z < foot_ik_r_target.Z) {
-		pelvis_target = foot_ik_l_target;
-	}
-	else {
-		pelvis_target = foot_ik_r_target;
-	}
+	FVector pelvis_target = CalculatePelvisTarget(foot_ik_l_target, foot_ik_r_target);
 
-	if (pelvis_offset.Z < pelvis_target.Z) {
-		pelvis_offset = FMath::VInterpTo(
-			pelvis_offset,
-			pelvis_target,
-			mesh->GetWorld()->GetDeltaSeconds(),
-			AnimInstance->pelvis_interp_speed_up
-		);
-	}
-	else {
-		pelvis_offset = FMath::VInterpTo(
-			pelvis_offset,
-			pelvis_target,
-			mesh->GetWorld()->GetDeltaSeconds(),
-			AnimInstance->pelvis_interp_speed_down
-		);
-	}
+	pelvis_offset = FMath::VInterpTo(
+		pelvis_offset,
+		pelvis_target,
+		mesh->GetWorld()->GetDeltaSeconds(),
+		SelectInterpSpeed(pelvis_offset.Z, pelvis_target.Z, AnimInstance->pelvis_interp_speed_up, AnimInstance->pelvis_interp_speed_down)
+	);
 }

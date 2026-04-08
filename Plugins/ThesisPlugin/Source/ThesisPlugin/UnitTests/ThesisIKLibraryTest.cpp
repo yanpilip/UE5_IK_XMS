@@ -153,3 +153,85 @@ bool FFootRotationZeroNormalTest::RunTest(const FString& Parameters)
 
     return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FIKBreakTest,
+    "ThesisPlugin.IK.SetFootIKC.BreakCondition",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter
+)
+
+bool FIKBreakTest::RunTest(const FString& Parameters)
+{
+    TestTrue("Standing break",
+        UThesisIKLibrary::ShouldBreakIK(120, 100, 80, false));
+
+    TestTrue("Crouching break",
+        UThesisIKLibrary::ShouldBreakIK(90, 100, 80, true));
+
+    TestFalse("Within range",
+        UThesisIKLibrary::ShouldBreakIK(50, 100, 80, false));
+
+    TestFalse("Exactly at limit (standing)",
+        UThesisIKLibrary::ShouldBreakIK(100, 100, 80, false));
+
+    TestFalse("Negative distance",
+        UThesisIKLibrary::ShouldBreakIK(-10, 100, 80, false));
+
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FPelvisAlphaTest,
+    "ThesisPlugin.IK.SetPelvisIKC.AlphaCalculation",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter
+)
+
+bool FPelvisAlphaTest::RunTest(const FString& Parameters)
+{
+    float result = UThesisIKLibrary::CalculatePelvisAlpha(1.0f, 1.0f);
+    TestEqual("Alpha = 1", result, 1.0f);
+
+    result = UThesisIKLibrary::CalculatePelvisAlpha(1.0f, 0.0f);
+    TestEqual("Alpha = 0.5", result, 0.5f);
+
+    result = UThesisIKLibrary::CalculatePelvisAlpha(0.0f, 0.0f);
+    TestEqual("Alpha = 0", result, 0.0f);
+
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FPelvisTargetTest,
+    "ThesisPlugin.IK.SetPelvisIKC.Target",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter
+)
+
+bool FPelvisTargetTest::RunTest(const FString& Parameters)
+{
+    FVector left(0, 0, -30);
+    FVector right(0, 0, -10);
+
+    FVector result = UThesisIKLibrary::CalculatePelvisTarget(left, right);
+
+    TestEqual("Lower foot chosen", result, left);
+
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FInterpSpeedTest,
+    "ThesisPlugin.IK.Common.SelectInterpSpeed",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter
+)
+
+bool FInterpSpeedTest::RunTest(const FString& Parameters)
+{
+    float result = UThesisIKLibrary::SelectInterpSpeed(10, 0, 30, 80);
+    TestEqual("Going down → use up speed", result, 30.0f);
+
+    result = UThesisIKLibrary::SelectInterpSpeed(0, 10, 30, 80);
+    TestEqual("Going up → use down speed", result, 80.0f);
+
+    return true;
+}
+

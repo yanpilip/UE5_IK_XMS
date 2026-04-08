@@ -23,6 +23,14 @@ public:
         float fh
     );
 
+    static float CalculatePelvisAlpha(float left, float right);
+
+    static FVector CalculatePelvisTarget(FVector left, FVector right);
+
+    static bool ShouldBreakIK(float distance, float standingLimit, float crouchingLimit, bool isCrouching);
+
+    static float SelectInterpSpeed(float currentZ, float targetZ, float up, float down);
+
     UFUNCTION(BlueprintCallable, Category = "Thesis|IK")
     static void SetFootIKC(
         USkeletalMeshComponent* mesh,
