@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "ThesisDemoCharacter.generated.h"
+#include "ThesisCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -19,7 +19,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AThesisCharacter : public ACharacter
+class THESISPLUGIN_API AThesisCharacter : public ACharacter
 {
 	GENERATED_BODY()
 

@@ -1,12 +1,11 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 
-#include "ThesisDemoPlayerController.h"
+#include "ThesisPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "InputMappingContext.h"
 #include "Blueprint/UserWidget.h"
-#include "Thesis.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
 void AThesisPlayerController::BeginPlay()
@@ -26,7 +25,7 @@ void AThesisPlayerController::BeginPlay()
 
 		} else {
 
-			UE_LOG(LogThesis, Error, TEXT("Could not spawn mobile controls widget."));
+			UE_LOG(LogTemp, Error, TEXT("Could not spawn mobile controls widget."));
 
 		}
 

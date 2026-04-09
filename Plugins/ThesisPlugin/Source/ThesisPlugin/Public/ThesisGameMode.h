@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "ThesisDemoGameMode.generated.h"
+#include "ThesisGameMode.generated.h"
 
 /**
  *  Simple GameMode for a third person game
  */
 UCLASS(abstract)
-class AThesisGameMode : public AGameModeBase
+class THESISPLUGIN_API AThesisGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 

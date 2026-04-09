@@ -85,6 +85,9 @@ void UThesisIKLibrary::SetFootIKC(
 		if (AnimInstance)
 		{
 			AnimInstance->ResetIK(foot_ikbone);
+
+			//An example of the event usage
+			AnimInstance->FeetLostIK();
 		}
 	}
 

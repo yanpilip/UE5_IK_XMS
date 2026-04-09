@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "ThesisDemoGameMode.h"
+#include "ThesisGameMode.h"
 
 AThesisGameMode::AThesisGameMode()
 {
