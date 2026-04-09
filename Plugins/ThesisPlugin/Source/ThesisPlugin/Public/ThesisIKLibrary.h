@@ -14,6 +14,23 @@ class THESISPLUGIN_API UThesisIKLibrary : public UBlueprintFunctionLibrary
 	
 
 public:
+    static FRotator CalculateFootRotation(const FVector& impactNormal);
+
+    static FVector CalculateFootTarget(
+        const FVector& impactPoint,
+        const FVector& impactNormal,
+        const FVector& efl,
+        float fh
+    );
+
+    static float CalculatePelvisAlpha(float left, float right);
+
+    static FVector CalculatePelvisTarget(FVector left, FVector right);
+
+    static bool ShouldBreakIK(float distance, float standingLimit, float crouchingLimit, bool isCrouching);
+
+    static float SelectInterpSpeed(float currentZ, float targetZ, float up, float down);
+
     UFUNCTION(BlueprintCallable, Category = "Thesis|IK")
     static void SetFootIKC(
         USkeletalMeshComponent* mesh,
