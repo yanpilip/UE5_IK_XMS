@@ -39,7 +39,7 @@ void UThesisAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		return;
 	}
-	if (EnableFootIK) {
+	if (EnableFootIK && (GetSkelMeshComponent()->GetAnimInstance() == this)) {
 		if (!IsFalling) {
 			UpdateFootIKC(DeltaSeconds);
 		}
