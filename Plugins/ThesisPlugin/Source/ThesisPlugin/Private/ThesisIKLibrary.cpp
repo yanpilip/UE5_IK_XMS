@@ -48,13 +48,19 @@ void UThesisIKLibrary::SetFootIKC(
 	FRotator& foot_ik_rotator
 )
 {
-	if (!mesh || !mesh->GetAnimInstance() || !Character) return;
+	if (!mesh || !Character) return;
 
-	if (mesh->GetAnimInstance()->GetCurveValue(anim_curve_name) <= 0.0f) {
-		foot_ik_rotator = FRotator(0, 0, 0);
-		foot_ik_offset = FVector(0, 0, 0);
+	UAnimInstance* AnimInst = mesh->GetAnimInstance();
+	if (!AnimInst || !AnimInstance) return;
+
+	if (AnimInst->GetCurveValue(anim_curve_name) <= 0.0f) {
+		foot_ik_rotator = FRotator::ZeroRotator;
+		foot_ik_offset = FVector::ZeroVector;
 		return;
 	}
+
+	UWorld* World = mesh->GetWorld();
+	if (!World) return;
 
 	FVector lateral_offset = Character->GetActorRightVector() * AnimInstance->ik_stance_width_offset;
 	if (foot_ikbone == AnimInstance->foot_ik_l_name) {
@@ -126,13 +132,18 @@ void UThesisIKLibrary::SetPelvisIKC(
 	FVector& pelvis_offset
 )
 {
+	if (!mesh || !AnimInstance) return;
+
+	UAnimInstance* AnimInst = mesh->GetAnimInstance();
+	if (!AnimInst) return;
+
 	pelvis_alpha = CalculatePelvisAlpha(
-		mesh->GetAnimInstance()->GetCurveValue(AnimInstance->curve_left),
-		mesh->GetAnimInstance()->GetCurveValue(AnimInstance->curve_right)
+		AnimInst->GetCurveValue(AnimInstance->curve_left),
+		AnimInst->GetCurveValue(AnimInstance->curve_right)
 	);
 
 	if (pelvis_alpha <= 0) {
-		pelvis_offset = FVector(0, 0, 0);
+		pelvis_offset = FVector::ZeroVector;
 		return;
 	}
 
