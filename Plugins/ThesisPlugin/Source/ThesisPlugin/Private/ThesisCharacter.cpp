@@ -151,5 +151,5 @@ void AThesisCharacter::CrouchToggle()
 		isCrouching = true;
 	}
 	
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, isCrouching ? TEXT("True") : TEXT("False"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, isCrouching ? TEXT("True") : TEXT("False"));
 }
