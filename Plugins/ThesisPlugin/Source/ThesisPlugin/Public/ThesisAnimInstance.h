@@ -26,38 +26,44 @@ protected:
 public:
 	void ResetIK(FName legname);
 
-	UFUNCTION(BlueprintPure, Category = "Character")
+	UFUNCTION(BlueprintPure, Category = "Thesis_Plugin_State")
 	bool GetIsCrouchedState() const;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Character")
-	ACharacter* Character = nullptr;
+	UPROPERTY(BlueprintReadWrite, Category = "Thesis_Plugin_State")
+	ACharacter* ThesisCharacter = nullptr;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Character")
-	UCharacterMovementComponent* MovementComponent = nullptr;
+	UPROPERTY(BlueprintReadWrite, Category = "Thesis_Plugin_State")
+	UCharacterMovementComponent* ThesisMovementComponent = nullptr;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Character")
-	FVector Velocity = FVector::ZeroVector;
+	UPROPERTY(BlueprintReadWrite, Category = "Thesis_Plugin_State")
+	FVector ThesisVelocity = FVector::ZeroVector;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Character")
-	float GroundSpeed = 0.0f;
+	UPROPERTY(BlueprintReadWrite, Category = "Thesis_Plugin_State")
+	float ThesisGroundSpeed = 0.0f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Character")
-	float Direction = 0.0f;
+	UPROPERTY(BlueprintReadWrite, Category = "Thesis_Plugin_State")
+	float ThesisDirection = 0.0f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Character")
-	bool ShouldMove = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Thesis_Plugin_State")
+	bool ThesisShouldMove = false;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Character")
-	bool IsFalling = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Thesis_Plugin_State")
+	bool ThesisIsFalling = false;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Character")
-	bool IsCrouched = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Thesis_Plugin_State")
+	bool ThesisIsCrouched = false;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Features")
-	bool ShouldCrouch = false;
+	bool ThesisShouldCrouch = false;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Features")
 	bool EnableFootIK = true;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Features")
+	bool ThesisDebugMode = false;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Features")
+	bool force_curve_value = false;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Offsets")
 	FVector foot_ik_l_offset_c = FVector(0, 0, 0);
@@ -132,6 +138,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Names|Bones")
 	FName root_bone_name = FName("root");
+
+	UPROPERTY(BlueprintReadWrite, Category = "Thesis|Mesh")
+	USkeletalMeshComponent* ThesisMesh = nullptr;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Features")
 	void FeetLostIK();

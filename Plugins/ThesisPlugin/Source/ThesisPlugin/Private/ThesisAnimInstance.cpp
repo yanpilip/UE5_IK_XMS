@@ -13,83 +13,106 @@ void UThesisAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	Character = Cast<ACharacter>(TryGetPawnOwner());
+	ThesisCharacter = Cast<ACharacter>(TryGetPawnOwner());
 }
 
 bool UThesisAnimInstance::GetIsCrouchedState() const {
-	return ((MovementComponent && ShouldCrouch) ? MovementComponent->IsCrouching() : false);
+	return ((ThesisMovementComponent && ThesisShouldCrouch) ? ThesisMovementComponent->IsCrouching() : false);
 }
 
 void UThesisAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (!Character)
-	{
-		Character = Cast<ACharacter>(TryGetPawnOwner());
+	APawn* OwningPawn = TryGetPawnOwner();
+	if (!OwningPawn) return;
+	if (ThesisDebugMode) {
+		GEngine->AddOnScreenDebugMessage(1, 15.0f, FColor::Yellow, TEXT("===ThesisAnimInstance Start===\nThesisAnimInstance -> (OwningPawn) check: True"));
 	}
 
-	if (!Character)
+	if (!ThesisCharacter)
 	{
-		return;
+		ThesisCharacter = Cast<ACharacter>(OwningPawn);
+	}
+	if (!ThesisCharacter) return;
+	if (ThesisDebugMode) {
+		GEngine->AddOnScreenDebugMessage(2, 15.0f, FColor::Yellow, TEXT("ThesisAnimInstance -> (ThesisCharacter) check: True"));
 	}
 
-	MovementComponent = Character->GetCharacterMovement();
-	if (!MovementComponent)
+	if (!ThesisMovementComponent)
 	{
-		return;
+		ThesisMovementComponent = ThesisCharacter->GetCharacterMovement();
 	}
-	if (EnableFootIK) {
-		if (!IsFalling) {
+	if (!ThesisMovementComponent) return;
+	if (ThesisDebugMode) {
+		GEngine->AddOnScreenDebugMessage(3, 15.0f, FColor::Yellow, TEXT("ThesisAnimInstance -> (ThesisMovementComponent) check: True"));
+	}
+
+
+	ThesisMesh = GetSkelMeshComponent();
+	if (ThesisDebugMode && ThesisMesh) {
+		GEngine->AddOnScreenDebugMessage(4, 15.0f, FColor::Yellow, TEXT("ThesisAnimInstance -> (ThesisMesh) check: True"));
+	}
+	if (!ThesisMesh || ThesisMesh->GetOwner() != GetOwningActor()) return;
+	if (ThesisDebugMode) {
+		GEngine->AddOnScreenDebugMessage(5, 15.0f, FColor::Yellow, TEXT("ThesisAnimInstance -> (ThesisMesh->GetOwner() != GetOwningActor()) check: True\n===ThesisAnimInstance End==="));
+	}
+
+
+	UpdateCharacterState();
+	if (EnableFootIK && (ThesisMesh->GetAnimInstance() == this)) {
+		if (!ThesisIsFalling) {
 			UpdateFootIKC(DeltaSeconds);
 		}
 		else
 		{
-			UThesisIKLibrary::SetPelvisIKC(Character->GetMesh(), this, FVector(0, 0, 0), FVector(0, 0, 0), pelvis_alpha_c, pelvis_offset_c);
+			UThesisIKLibrary::SetPelvisIKC(ThesisMesh, this, FVector(0, 0, 0), FVector(0, 0, 0), pelvis_alpha_c, pelvis_offset_c);
 			ResetIK(foot_ik_l_name);
 			ResetIK(foot_ik_r_name);
 		}
 	}
-	UpdateCharacterState();
 }
 
 void UThesisAnimInstance::UpdateCharacterState()
 {
-	Velocity = Character->GetVelocity();
+	ThesisVelocity = ThesisCharacter->GetVelocity();
 
-	GroundSpeed = Velocity.Size2D();
+	ThesisGroundSpeed = ThesisVelocity.Size2D();
 
 
-	if (MovementComponent->bOrientRotationToMovement) {
-		Direction = FMath::Clamp(UKismetAnimationLibrary::CalculateDirection(Velocity, Character->GetActorRotation()), -45.0f, 45.0f);
+	if (ThesisMovementComponent->bOrientRotationToMovement) {
+		ThesisDirection = FMath::Clamp(UKismetAnimationLibrary::CalculateDirection(ThesisVelocity, ThesisCharacter->GetActorRotation()), -45.0f, 45.0f);
 	}
 	else {
-		Direction = UKismetAnimationLibrary::CalculateDirection(Velocity, Character->GetActorRotation());
+		ThesisDirection = UKismetAnimationLibrary::CalculateDirection(ThesisVelocity, ThesisCharacter->GetActorRotation());
 	}
 
-	ShouldMove = GroundSpeed > 0.01f && !(MovementComponent->GetCurrentAcceleration().Equals(FVector::ZeroVector, 0.0f));
-	if (Character->GetCharacterMovement())
+	ThesisShouldMove = ThesisGroundSpeed > 0.01f && !(ThesisMovementComponent->GetCurrentAcceleration().Equals(FVector::ZeroVector, 0.0f));
+	if (ThesisCharacter->GetCharacterMovement())
 	{
-		IsFalling = MovementComponent->IsFalling();
-		IsCrouched = GetIsCrouchedState();
+		ThesisIsFalling = ThesisMovementComponent->IsFalling();
+		ThesisIsCrouched = GetIsCrouchedState();
 	}
 	else
 	{
-		IsFalling = false;
-		IsCrouched = false;
+		ThesisIsFalling = false;
+		ThesisIsCrouched = false;
 	}
 }
 
 void UThesisAnimInstance::UpdateFootIKC(float DeltaSeconds)
 {
-	if (!Character)
+	if (!ThesisCharacter)
 	{
 		return;
 	}
-	UThesisIKLibrary::SetFootIKC(Character->GetMesh(), Character, this, IsCrouched, curve_left, foot_ik_l_name, root_bone_name, foot_ik_l_offset_c, foot_ik_l_target_c, foot_ik_l_rotation_c);
-	UThesisIKLibrary::SetFootIKC(Character->GetMesh(), Character, this, IsCrouched, curve_right, foot_ik_r_name, root_bone_name, foot_ik_r_offset_c, foot_ik_r_target_c, foot_ik_r_rotation_c);
+	if (ThesisDebugMode) {
+		GEngine->AddOnScreenDebugMessage(6, 15.0f, FColor::Yellow, TEXT("ThesisAnimInstance -> UpdateFootIKC -> (ThesisCharacter) check: True"));
+	}
+	UThesisIKLibrary::SetFootIKC(ThesisMesh, ThesisCharacter, this, ThesisIsCrouched, curve_left, foot_ik_l_name, root_bone_name, foot_ik_l_offset_c, foot_ik_l_target_c, foot_ik_l_rotation_c);
+	UThesisIKLibrary::SetFootIKC(ThesisMesh, ThesisCharacter, this, ThesisIsCrouched, curve_right, foot_ik_r_name, root_bone_name, foot_ik_r_offset_c, foot_ik_r_target_c, foot_ik_r_rotation_c);
 
-	UThesisIKLibrary::SetPelvisIKC(Character->GetMesh(), this, foot_ik_l_target_c, foot_ik_r_target_c, pelvis_alpha_c, pelvis_offset_c);
+	UThesisIKLibrary::SetPelvisIKC(ThesisMesh, this, foot_ik_l_target_c, foot_ik_r_target_c, pelvis_alpha_c, pelvis_offset_c);
 
 }
 
@@ -101,17 +124,17 @@ void UThesisAnimInstance::ResetIK(FName legname) {
 			GetWorld()->GetDeltaSeconds(),
 			reset_ik_speed
 		);
-		foot_ik_r_offset_c = FMath::VInterpTo(
-			foot_ik_r_offset_c,
-			FVector(0, 0, 0),
+		foot_ik_l_rotation_c = FMath::RInterpTo(
+			foot_ik_l_rotation_c,
+			FRotator(0, 0, 0),
 			GetWorld()->GetDeltaSeconds(),
 			reset_ik_speed
 		);
 	}
-	else {
-		foot_ik_l_rotation_c = FMath::RInterpTo(
-			foot_ik_l_rotation_c,
-			FRotator(0, 0, 0),
+	else if (legname == foot_ik_r_name) {
+		foot_ik_r_offset_c = FMath::VInterpTo(
+			foot_ik_r_offset_c,
+			FVector(0, 0, 0),
 			GetWorld()->GetDeltaSeconds(),
 			reset_ik_speed
 		);
