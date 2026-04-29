@@ -2,6 +2,8 @@
 #include "ThesisIKLibrary.h"
 #include "ThesisPlugin.h"
 #include "CoreMinimal.h"
+#include "Engine/Engine.h"
+#include "Engine/World.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"

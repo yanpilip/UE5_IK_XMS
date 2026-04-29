@@ -5,8 +5,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "ThesisAnimInstance.generated.h"
 
-
-class AThesisCharacter;
+class ACharacter;
 class UCharacterMovementComponent;
 
 UCLASS()

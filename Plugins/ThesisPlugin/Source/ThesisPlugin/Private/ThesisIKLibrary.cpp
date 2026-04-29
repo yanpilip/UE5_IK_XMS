@@ -7,6 +7,11 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "DrawDebugHelpers.h"
 #include "ThesisAnimInstance.h"
+#include "Engine/Engine.h"
+#include "Engine/World.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 FRotator UThesisIKLibrary::CalculateFootRotation(const FVector& impactNormal)
 {
