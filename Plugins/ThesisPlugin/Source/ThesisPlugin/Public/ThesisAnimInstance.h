@@ -89,6 +89,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Offsets")
 	float ik_stance_width_offset = float(0.0f);
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Offsets")
+	FVector ik_left_knee_bending_direction = FVector(20.0f, 30.0f, 0.0f);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Offsets")
+	FVector ik_right_knee_bending_direction = FVector(-20.0f, -30.0f, 0.0f);
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|FootIK|Other Variables")
 	float pelvis_alpha_c = float(1.0f);
 
@@ -115,14 +121,15 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations|Pelvis")
 	float pelvis_interp_speed_down = float(15.0f);
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Interpolations")
 	float reset_ik_speed = float(10.0f);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Trace")
-	FVector foot_trace_above = FVector(0,0,50);
+	FVector foot_trace_above = FVector(0.0f, 0.0f, 50.0f);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Trace")
-	FVector foot_trace_below = FVector(0, 0, 60);
+	FVector foot_trace_below = FVector(0.0f, 0.0f, 60.0f);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Thesis|Variables|Names|IK Curves")
 	FName curve_left = FName("Enable_FootIK_L");
